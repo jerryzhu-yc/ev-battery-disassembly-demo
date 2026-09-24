@@ -1,0 +1,292 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="ur5e_battery_disassembly_optimized">
+  <compiler angle="radian" meshdir="assets" autolimits="true" />
+  <option integrator="implicitfast" timestep="0.002">
+    <flag multiccd="enable" />
+  </option>
+  <default>
+    <default class="ur5e">
+      <material specular="0.5" shininess="0.25" />
+      <joint axis="0 1 0" range="-6.28319 6.28319" armature="0.1" />
+      <general gaintype="fixed" biastype="affine" ctrlrange="-6.2831 6.2831" gainprm="2000" biasprm="0 -2000 -400" forcerange="-150 150" />
+      <default class="size3">
+        <default class="size3_limited">
+          <joint range="-3.1415 3.1415" />
+          <general ctrlrange="-3.1415 3.1415" />
+        </default>
+      </default>
+      <default class="size1">
+        <general gainprm="500" biasprm="0 -500 -100" forcerange="-28 28" />
+      </default>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2" />
+      </default>
+      <default class="collision">
+        <geom type="capsule" group="3" />
+        <default class="eef_collision">
+          <geom type="cylinder" />
+        </default>
+      </default>
+      <site size="0.001" rgba="0.5 0.5 0.5 0.3" group="4" />
+    </default>
+  </default>
+  <asset>
+    <material class="ur5e" name="black" rgba="0.033 0.033 0.033 1" />
+    <material class="ur5e" name="jointgray" rgba="0.278 0.278 0.278 1" />
+    <material class="ur5e" name="linkgray" rgba="0.82 0.82 0.82 1" />
+    <material class="ur5e" name="urblue" rgba="0.49 0.678 0.8 1" />
+    <mesh file="base_0.obj" />
+    <mesh file="base_1.obj" />
+    <mesh file="shoulder_0.obj" />
+    <mesh file="shoulder_1.obj" />
+    <mesh file="shoulder_2.obj" />
+    <mesh file="upperarm_0.obj" />
+    <mesh file="upperarm_1.obj" />
+    <mesh file="upperarm_2.obj" />
+    <mesh file="upperarm_3.obj" />
+    <mesh file="forearm_0.obj" />
+    <mesh file="forearm_1.obj" />
+    <mesh file="forearm_2.obj" />
+    <mesh file="forearm_3.obj" />
+    <mesh file="wrist1_0.obj" />
+    <mesh file="wrist1_1.obj" />
+    <mesh file="wrist1_2.obj" />
+    <mesh file="wrist2_0.obj" />
+    <mesh file="wrist2_1.obj" />
+    <mesh file="wrist2_2.obj" />
+    <mesh file="wrist3.obj" />
+  </asset>
+  <worldbody>
+    <light name="spotlight" mode="targetbodycom" target="wrist_2_link" pos="0 -1 2" />
+    <body name="ur5e_pedestal" pos="-0.55 -0.32 -0.10">
+      <geom name="pedestal_bottom_plate" type="box" pos="0 0 0.025" size="0.16 0.16 0.025" rgba="0.18 0.18 0.20 1" />
+      <geom name="pedestal_column" type="box" pos="0 0 0.26" size="0.11 0.11 0.235" rgba="0.28 0.28 0.30 1" />
+      <geom name="pedestal_top_plate" type="box" pos="0 0 0.50" size="0.14 0.14 0.02" rgba="0.15 0.15 0.17 1" />
+    </body>
+    <body name="base" pos="-0.55 -0.32 0.42" quat="0 0 0 -1" childclass="ur5e">
+      <inertial mass="4.0" pos="0 0 0" diaginertia="0.00443333156 0.00443333156 0.0072" />
+      <geom mesh="base_0" material="black" class="visual" />
+      <geom mesh="base_1" material="jointgray" class="visual" />
+      <body name="shoulder_link" pos="0 0 0.163">
+        <inertial mass="3.7" pos="0 0 0" diaginertia="0.0102675 0.0102675 0.00666" />
+        <joint name="shoulder_pan_joint" class="size3" axis="0 0 1" />
+        <geom mesh="shoulder_0" material="urblue" class="visual" />
+        <geom mesh="shoulder_1" material="black" class="visual" />
+        <geom mesh="shoulder_2" material="jointgray" class="visual" />
+        <geom class="collision" size="0.06 0.06" pos="0 0 -0.04" />
+        <body name="upper_arm_link" pos="0 0.138 0" quat="1 0 1 0">
+          <inertial mass="8.393" pos="0 0 0.2125" diaginertia="0.133886 0.133886 0.0151074" />
+          <joint name="shoulder_lift_joint" class="size3" />
+          <geom mesh="upperarm_0" material="linkgray" class="visual" />
+          <geom mesh="upperarm_1" material="black" class="visual" />
+          <geom mesh="upperarm_2" material="jointgray" class="visual" />
+          <geom mesh="upperarm_3" material="urblue" class="visual" />
+          <geom class="collision" pos="0 -0.04 0" quat="1 1 0 0" size="0.06 0.06" />
+          <geom class="collision" size="0.05 0.2" pos="0 0 0.2" />
+          <body name="forearm_link" pos="0 -0.131 0.425">
+            <inertial mass="2.275" pos="0 0 0.196" diaginertia="0.0311796 0.0311796 0.004095" />
+            <joint name="elbow_joint" class="size3_limited" />
+            <geom mesh="forearm_0" material="urblue" class="visual" />
+            <geom mesh="forearm_1" material="linkgray" class="visual" />
+            <geom mesh="forearm_2" material="black" class="visual" />
+            <geom mesh="forearm_3" material="jointgray" class="visual" />
+            <geom class="collision" pos="0 0.08 0" quat="1 1 0 0" size="0.055 0.06" />
+            <geom class="collision" size="0.038 0.19" pos="0 0 0.2" />
+            <body name="wrist_1_link" pos="0 0 0.392" quat="1 0 1 0">
+              <inertial mass="1.219" pos="0 0.127 0" diaginertia="0.0025599 0.0025599 0.0021942" />
+              <joint name="wrist_1_joint" class="size1" />
+              <geom mesh="wrist1_0" material="black" class="visual" />
+              <geom mesh="wrist1_1" material="urblue" class="visual" />
+              <geom mesh="wrist1_2" material="jointgray" class="visual" />
+              <geom class="collision" pos="0 0.05 0" quat="1 1 0 0" size="0.04 0.07" />
+              <body name="wrist_2_link" pos="0 0.127 0">
+                <inertial mass="1.219" pos="0 0 0.1" diaginertia="0.0025599 0.0025599 0.0021942" />
+                <joint name="wrist_2_joint" axis="0 0 1" class="size1" />
+                <geom mesh="wrist2_0" material="black" class="visual" />
+                <geom mesh="wrist2_1" material="urblue" class="visual" />
+                <geom mesh="wrist2_2" material="jointgray" class="visual" />
+                <geom class="collision" size="0.04 0.06" pos="0 0 0.04" />
+                <geom class="collision" pos="0 0.02 0.1" quat="1 1 0 0" size="0.04 0.04" />
+                <body name="wrist_3_link" pos="0 0 0.1">
+                  <inertial mass="0.1889" pos="0 0.0771683 0" quat="1 0 0 1" diaginertia="0.000132134 9.90863e-05 9.90863e-05" />
+                  <joint name="wrist_3_joint" class="size1" />
+                  <geom material="linkgray" mesh="wrist3" class="visual" />
+                  <geom class="eef_collision" pos="0 0.08 0" quat="1 1 0 0" size="0.04 0.02" />
+                  <site name="attachment_site" pos="0 0.1 0" quat="-1 1 0 0" />
+                  <body name="smc_vacuum_gripper_+Y" pos="0 0.105 0" quat="1 0 0 0">
+                    <geom name="smc_adapter_vis" type="cylinder" pos="0 0.0 0" quat="0.7071068 0.7071068 0 0" size="0.055 0.02" rgba="0.65 0.65 0.68 1" contype="0" conaffinity="0" />
+                    <geom name="smc_blue_ring_vis" type="cylinder" pos="0 0.04 0" quat="0.7071068 0.7071068 0 0" size="0.05 0.012" rgba="0.05 0.30 0.95 1" contype="0" conaffinity="0" />
+                    <geom name="smc_vacuum_body_vis" type="box" pos="0 0.08 0" size="0.045 0.035 0.035" rgba="0.82 0.82 0.80 1" contype="0" conaffinity="0" />
+                    <geom name="smc_vacuum_stem_vis" type="cylinder" pos="0 0.135 0" quat="0.7071068 0.7071068 0 0" size="0.016 0.05" rgba="0.02 0.02 0.02 1" contype="0" conaffinity="0" />
+                    <geom name="smc_suction_neck_vis" type="cylinder" pos="0 0.19 0" quat="0.7071068 0.7071068 0 0" size="0.03 0.02" rgba="0.01 0.01 0.01 1" contype="0" conaffinity="0" />
+                    <geom name="smc_suction_pad_vis" type="cylinder" pos="0 0.23 0" quat="0.7071068 0.7071068 0 0" size="0.085 0.025" rgba="0.005 0.005 0.005 1" contype="0" conaffinity="0" />
+                    <geom name="smc_suction_lip_vis" type="cylinder" pos="0 0.26 0" quat="0.7071068 0.7071068 0 0" size="0.07 0.006" rgba="0.12 0.12 0.12 1" contype="0" conaffinity="0" />
+                    <site name="suction_tcp" pos="0 0.28 0" size="0.015" rgba="1 0 0 1" />
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="disassembly_station" pos="-0.550000 0.200000 0.400000">
+      <geom name="conveyor_belt_visual" type="box" pos="0 0 0.075" size="1.800000 0.180000 0.025000" rgba="0.04 0.04 0.045 1" />
+      <geom name="conveyor_left_rail" type="box" pos="0 0.205 0.12" size="1.820000 0.015000 0.035000" rgba="0.55 0.55 0.58 1" />
+      <geom name="conveyor_right_rail" type="box" pos="0 -0.205 0.12" size="1.820000 0.015000 0.035000" rgba="0.55 0.55 0.58 1" />
+      <geom name="line_marker_infeed" type="box" pos="1.3 0 0.103" size="0.25 0.175 0.002" rgba="0.10 0.65 0.10 0.45" contype="0" conaffinity="0" />
+      <geom name="line_marker_workstation" type="box" pos="0.0 0 0.103" size="0.25 0.175 0.002" rgba="0.95 0.75 0.05 0.45" contype="0" conaffinity="0" />
+      <geom name="line_marker_outfeed" type="box" pos="-1.25 0 0.103" size="0.25 0.175 0.002" rgba="0.75 0.10 0.10 0.45" contype="0" conaffinity="0" />
+      <geom name="conveyor_frame_left" type="box" pos="0 0.195 0.015" size="1.80 0.025 0.025" rgba="0.30 0.30 0.32 1" />
+      <geom name="conveyor_frame_right" type="box" pos="0 -0.195 0.015" size="1.80 0.025 0.025" rgba="0.30 0.30 0.32 1" />
+      <geom name="conveyor_support_1_L" type="box" pos="-1.4 0.17 -0.235" size="0.035 0.035 0.235" rgba="0.38 0.38 0.40 1" />
+      <geom name="conveyor_support_1_R" type="box" pos="-1.4 -0.17 -0.235" size="0.035 0.035 0.235" rgba="0.38 0.38 0.40 1" />
+      <geom name="conveyor_support_2_L" type="box" pos="0.0 0.17 -0.235" size="0.035 0.035 0.235" rgba="0.38 0.38 0.40 1" />
+      <geom name="conveyor_support_2_R" type="box" pos="0.0 -0.17 -0.235" size="0.035 0.035 0.235" rgba="0.38 0.38 0.40 1" />
+      <geom name="conveyor_support_3_L" type="box" pos="1.4 0.17 -0.235" size="0.035 0.035 0.235" rgba="0.38 0.38 0.40 1" />
+      <geom name="conveyor_support_3_R" type="box" pos="1.4 -0.17 -0.235" size="0.035 0.035 0.235" rgba="0.38 0.38 0.40 1" />
+      <geom name="conveyor_crossbeam_1" type="box" pos="-1.4 0 -0.015" size="0.045 0.21 0.025" rgba="0.28 0.28 0.30 1" />
+      <geom name="conveyor_crossbeam_2" type="box" pos="0.0 0 -0.015" size="0.045 0.21 0.025" rgba="0.28 0.28 0.30 1" />
+      <geom name="conveyor_crossbeam_3" type="box" pos="1.4 0 -0.015" size="0.045 0.21 0.025" rgba="0.28 0.28 0.30 1" />
+    </body>
+    <body name="battery_tray" pos="-0.550000 0.200000 0.535000">
+      <freejoint name="battery_tray_freejoint" />
+      <geom name="battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" />
+    </body>
+    <body name="battery_cell_1" pos="-0.620000 0.155000 0.620000">
+      <freejoint name="battery_cell_1_freejoint" />
+      <geom name="battery_cell_1_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="battery_cell_1_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="battery_cell_2" pos="-0.480000 0.155000 0.620000">
+      <freejoint name="battery_cell_2_freejoint" />
+      <geom name="battery_cell_2_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="battery_cell_2_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="battery_cell_3" pos="-0.620000 0.245000 0.620000">
+      <freejoint name="battery_cell_3_freejoint" />
+      <geom name="battery_cell_3_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="battery_cell_3_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="battery_cell_4" pos="-0.480000 0.245000 0.620000">
+      <freejoint name="battery_cell_4_freejoint" />
+      <geom name="battery_cell_4_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="battery_cell_4_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="battery_busbar_1" pos="-0.620000 0.200000 0.680000">
+      <freejoint name="battery_busbar_1_freejoint" />
+      <geom name="battery_busbar_1_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
+      <site name="battery_busbar_1_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="battery_busbar_2" pos="-0.480000 0.200000 0.680000">
+      <freejoint name="battery_busbar_2_freejoint" />
+      <geom name="battery_busbar_2_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
+      <site name="battery_busbar_2_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="battery_cover" pos="-0.550000 0.200000 0.706000">
+      <freejoint name="battery_cover_freejoint" />
+      <geom name="battery_cover_geom" type="box" pos="0 0 0" size="0.25 0.17 0.016" rgba="0.10 0.10 0.12 1" mass="1.2" friction="0.9 0.005 0.0002" />
+      <site name="battery_cover_top_site" pos="0 0 0.016000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="ground_sort_bins">
+      <body name="bin_cover" pos="-1.080000 -0.900000 0.000000">
+        <geom name="bin_cover_bottom" type="box" pos="0.000000 0.180000 -0.080000" size="0.320000 0.420000 0.020000" rgba="0.55 0.12 0.12 1" friction="1.0 0.005 0.0001" />
+        <geom name="bin_cover_wall_left" type="box" pos="-0.310000 0.180000 0.040000" size="0.010000 0.420000 0.100000" rgba="0.55 0.12 0.12 1" />
+        <geom name="bin_cover_wall_right" type="box" pos="0.310000 0.180000 0.040000" size="0.010000 0.420000 0.100000" rgba="0.55 0.12 0.12 1" />
+        <geom name="bin_cover_wall_front" type="box" pos="0.000000 -0.230000 0.040000" size="0.320000 0.010000 0.100000" rgba="0.55 0.12 0.12 1" />
+        <geom name="bin_cover_wall_back" type="box" pos="0.000000 0.590000 0.040000" size="0.320000 0.010000 0.100000" rgba="0.55 0.12 0.12 1" />
+      </body>
+      <body name="bin_busbar" pos="-0.500000 -0.900000 0.000000">
+        <geom name="bin_busbar_bottom" type="box" pos="0 0 -0.080000" size="0.220000 0.180000 0.020000" rgba="0.85 0.42 0.08 1" friction="1.0 0.005 0.0001" />
+        <geom name="bin_busbar_wall_left" type="box" pos="-0.210000 0 0.040000" size="0.010000 0.180000 0.100000" rgba="0.85 0.42 0.08 1" />
+        <geom name="bin_busbar_wall_right" type="box" pos="0.210000 0 0.040000" size="0.010000 0.180000 0.100000" rgba="0.85 0.42 0.08 1" />
+        <geom name="bin_busbar_wall_front" type="box" pos="0 -0.170000 0.040000" size="0.220000 0.010000 0.100000" rgba="0.85 0.42 0.08 1" />
+        <geom name="bin_busbar_wall_back" type="box" pos="0 0.170000 0.040000" size="0.220000 0.010000 0.100000" rgba="0.85 0.42 0.08 1" />
+      </body>
+      <body name="bin_cell" pos="0.000000 -0.900000 0.000000">
+        <geom name="bin_cell_bottom" type="box" pos="0 0 -0.080000" size="0.240000 0.220000 0.020000" rgba="0.12 0.35 0.75 1" friction="1.0 0.005 0.0001" />
+        <geom name="bin_cell_wall_left" type="box" pos="-0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
+        <geom name="bin_cell_wall_right" type="box" pos="0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
+        <geom name="bin_cell_wall_front" type="box" pos="0 -0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
+        <geom name="bin_cell_wall_back" type="box" pos="0 0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
+      </body>
+    </body>
+    <geom name="floor" type="plane" pos="0 0 -0.10" size="4 4 0.1" rgba="0.16 0.18 0.21 1" friction="1 0.005 0.0001" />
+    <body name="pack2_battery_tray" pos="0.750000 0.200000 0.535000">
+      <freejoint name="pack2_battery_tray_freejoint" />
+      <geom name="pack2_battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" />
+    </body>
+    <body name="pack2_battery_cover" pos="0.750000 0.200000 0.706000">
+      <freejoint name="pack2_battery_cover_freejoint" />
+      <geom name="pack2_battery_cover_geom" type="box" pos="0 0 0" size="0.25 0.17 0.016" rgba="0.10 0.10 0.12 1" mass="1.2" friction="0.9 0.005 0.0002" />
+      <site name="pack2_battery_cover_top_site" pos="0 0 0.016000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="pack2_battery_busbar_1" pos="0.680000 0.200000 0.680000">
+      <freejoint name="pack2_battery_busbar_1_freejoint" />
+      <geom name="pack2_battery_busbar_1_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
+      <site name="pack2_battery_busbar_1_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="pack2_battery_busbar_2" pos="0.820000 0.200000 0.680000">
+      <freejoint name="pack2_battery_busbar_2_freejoint" />
+      <geom name="pack2_battery_busbar_2_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
+      <site name="pack2_battery_busbar_2_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="pack2_battery_cell_1" pos="0.680000 0.155000 0.620000">
+      <freejoint name="pack2_battery_cell_1_freejoint" />
+      <geom name="pack2_battery_cell_1_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="pack2_battery_cell_1_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="pack2_battery_cell_2" pos="0.820000 0.155000 0.620000">
+      <freejoint name="pack2_battery_cell_2_freejoint" />
+      <geom name="pack2_battery_cell_2_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="pack2_battery_cell_2_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="pack2_battery_cell_3" pos="0.680000 0.245000 0.620000">
+      <freejoint name="pack2_battery_cell_3_freejoint" />
+      <geom name="pack2_battery_cell_3_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="pack2_battery_cell_3_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="pack2_battery_cell_4" pos="0.820000 0.245000 0.620000">
+      <freejoint name="pack2_battery_cell_4_freejoint" />
+      <geom name="pack2_battery_cell_4_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
+      <site name="pack2_battery_cell_4_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
+    </body>
+    <body name="empty_tray_bin" pos="1.580000 0.680000 0.000000">
+      <geom name="empty_tray_bin_bottom" type="box" pos="0 0 0.020" size="0.36 0.29 0.020" rgba="0.18 0.42 0.22 1" friction="1.0 0.005 0.0001" />
+      <geom name="empty_tray_bin_wall_left" type="box" pos="-0.35 0 0.235" size="0.010 0.29 0.215" rgba="0.18 0.42 0.22 1" />
+      <geom name="empty_tray_bin_wall_front" type="box" pos="0 -0.28 0.235" size="0.36 0.010 0.215" rgba="0.18 0.42 0.22 1" />
+      <geom name="empty_tray_bin_wall_back" type="box" pos="0 0.28 0.235" size="0.36 0.010 0.215" rgba="0.18 0.42 0.22 1" />
+      <geom name="empty_tray_bin_leg_1" type="box" pos="-0.28 -0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
+      <geom name="empty_tray_bin_leg_2" type="box" pos="-0.28 0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
+      <geom name="empty_tray_bin_leg_3" type="box" pos="0.28 -0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
+      <geom name="empty_tray_bin_leg_4" type="box" pos="0.28 0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
+    </body>
+    <body name="bin_cell_2" pos="0.000000 -0.550000 0.000000">
+      <geom name="bin_cell_2_bottom" type="box" pos="0 0 -0.080000" size="0.240000 0.220000 0.020000" rgba="0.12 0.35 0.75 1" friction="1.0 0.005 0.0001" />
+      <geom name="bin_cell_2_wall_left" type="box" pos="-0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
+      <geom name="bin_cell_2_wall_right" type="box" pos="0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
+      <geom name="bin_cell_2_wall_front" type="box" pos="0 -0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
+      <geom name="bin_cell_2_wall_back" type="box" pos="0 0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
+    </body>
+  </worldbody>
+  <actuator>
+    <general class="size3" name="shoulder_pan" joint="shoulder_pan_joint" />
+    <general class="size3" name="shoulder_lift" joint="shoulder_lift_joint" />
+    <general class="size3_limited" name="elbow" joint="elbow_joint" />
+    <general class="size1" name="wrist_1" joint="wrist_1_joint" />
+    <general class="size1" name="wrist_2" joint="wrist_2_joint" />
+    <general class="size1" name="wrist_3" joint="wrist_3_joint" />
+  </actuator>
+  <equality>
+    <weld name="fixture_battery_cover" body1="battery_cover" active="true" solref="0.008 1" />
+    <weld name="fixture_battery_busbar_1" body1="battery_busbar_1" active="true" solref="0.008 1" />
+    <weld name="fixture_battery_busbar_2" body1="battery_busbar_2" active="true" solref="0.008 1" />
+    <weld name="fixture_battery_cell_1" body1="battery_cell_1" active="true" solref="0.008 1" />
+    <weld name="fixture_battery_cell_2" body1="battery_cell_2" active="true" solref="0.008 1" />
+    <weld name="fixture_battery_cell_3" body1="battery_cell_3" active="true" solref="0.008 1" />
+    <weld name="fixture_battery_cell_4" body1="battery_cell_4" active="true" solref="0.008 1" />
+  </equality>
+  <keyframe>
+    <key name="home" qpos="-1.831428077 -1.442282176 0.9637521567 -1.09226545 -1.570797549 -0.2606328797 -0.62 0.155 0.62 1 0 0 0 -0.48 0.155 0.62 1 0 0 0 -0.62 0.245 0.62 1 0 0 0 -0.48 0.245 0.62 1 0 0 0 -0.62 0.2 0.68 1 0 0 0 -0.48 0.2 0.68 1 0 0 0 -0.55 0.2 0.706 1 0 0 0" ctrl="-1.831428077 -1.442282176 0.9637521567 -1.09226545 -1.570797549 -0.2606328797" />
+  </keyframe>
+</mujoco>
