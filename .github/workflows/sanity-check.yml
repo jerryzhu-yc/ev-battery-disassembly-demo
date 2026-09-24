@@ -1,0 +1,46 @@
+name: Sanity Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  basic-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python syntax check
+        run: |
+          python -m py_compile \
+            disassembly.py \
+            run_orca.py \
+            run_two_pack_orca.py \
+            tools/make_two_pack_scene.py
+
+      - name: XML syntax check
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          ET.parse("scene_two_pack.xml")
+          print("scene_two_pack.xml: OK")
+          PY
+
+      - name: Check required files
+        run: |
+          test -f README.md
+          test -f requirements.txt
+          test -f scene_two_pack.xml
+          test -f disassembly.py
+          test -f run_orca.py
+          test -f run_two_pack_orca.py
+          test -f tools/make_two_pack_scene.py
+          test -d assets

@@ -1,4 +1,24 @@
 #!/usr/bin/env python3
+"""
+LEGACY SCENE GENERATION UTILITY
+
+This script was used during development to construct the two-pack scene
+from earlier source XML files.
+
+It is NOT required to run the current demo.
+
+The final runnable scene is committed directly as:
+
+    scene_two_pack.xml
+
+This utility expects one of the historical source files:
+
+    scene_optimized.xml
+    00_disassembly_ground_bins.xml
+
+Those source files are not part of the final demo repository.
+"""
+
 
 from pathlib import Path
 import copy

@@ -1,0 +1,11 @@
+# Public Python dependencies
+numpy
+mujoco
+grpcio
+
+# NOTE:
+# Live OrcaStudio integration additionally requires the OrcaLab /
+# OrcaGym SDK that provides the `orca_gym` Python package.
+#
+# `orca_gym` is normally supplied by the OrcaStudio development
+# environment and is therefore not installed from this file.

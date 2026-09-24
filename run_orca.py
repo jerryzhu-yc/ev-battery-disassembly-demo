@@ -70,7 +70,7 @@ def main():
     p.add_argument("--addr",default="localhost:50051")
     p.add_argument("--prefix",default="",help="Exact imported name prefix, such as Robot1_.")
     p.add_argument("--offline",action="store_true",help="Test installed SDK locally, without OrcaStudio.")
-    p.add_argument("--xml",type=Path,default=here/"scene_optimized.xml",help="Used only with --offline.")
+    p.add_argument("--xml",type=Path,default=here/"scene_two_pack.xml",help="Used only with --offline.")
     p.add_argument("--list-names",action="store_true",help="Print downloaded joint/site/body names and exit.")
     p.add_argument("--fast",action="store_true")
     p.add_argument("--through",choices=PARTS)
@@ -110,7 +110,7 @@ def main():
         return 130
     except Exception as e:
         print(f"STOPPED: {type(e).__name__}: {e}",file=sys.stderr)
-        print("Live mode: import scene_optimized.xml with assets/, press Run in Orca, verify --addr and --prefix.",file=sys.stderr)
+        print("Live mode: import scene_two_pack.xml with assets/, press Run in Orca, verify --addr and --prefix.",file=sys.stderr)
         if c is not None:
             c.report["success"]=False
             c.report["error"]=f"{type(e).__name__}: {e}"

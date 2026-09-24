@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime logs / reports
+*.log
+orca_run_report.json
+reports/
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.bak
+*.backup
+*.swp
+*~
+
+# Local Orca / cache files
+.cache/
