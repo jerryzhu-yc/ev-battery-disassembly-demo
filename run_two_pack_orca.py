@@ -388,6 +388,12 @@ def ready_above_cover(
     controller,
     session,
 ):
+    """
+    从机械臂当前位置平滑移动到当前电池包盖板上方。
+
+    不直接修改 qpos，因此第一包结束切换到第二包时
+    机械臂不会瞬间刷新到另一个位置。
+    """
 
     cover_site = controller.d.site_xpos[
         controller.part_sites[
@@ -402,33 +408,35 @@ def ready_above_cover(
         )
     )
 
-    q = controller.solve(
-        target,
-        controller.d.qpos[
-            controller.qa
-        ].copy()
+    print()
+    print(
+        "[READY] moving from current TCP:",
+        np.round(
+            controller.d.site_xpos[
+                controller.sid
+            ],
+            3
+        ),
+        "->",
+        np.round(target, 3),
+        flush=True,
     )
 
-    controller.d.qpos[
-        controller.qa
-    ] = q
-
-    controller.d.qvel[
-        controller.va
-    ] = 0.0
-
-    controller.d.ctrl[
-        controller.aids
-    ] = q
-
-    mujoco.mj_forward(
-        controller.m,
-        controller.d
+    # 使用现有的安全 transfer：
+    #
+    # 当前点
+    #   -> 收回到安全半径
+    #   -> 圆弧转向
+    #   -> 移动到新电池包上方
+    controller.transfer(
+        target[:2],
+        float(target[2]),
+        "ready",
     )
 
     session.sync(
         controller,
-        force=True
+        force=True,
     )
 
 
@@ -1334,7 +1342,9 @@ def store_empty_tray_in_bin(
         direction[:] = 0
 
 
-    conveyor_exit_speed = .08
+    # 空托盘已经位于绿色回收箱正上方。
+    # 此时取消水平速度，让托盘依靠重力垂直落入箱内。
+    conveyor_exit_speed = 0.0
 
 
     controller.d.qvel[
@@ -1933,7 +1943,7 @@ def main():
             session.data,
             config=config,
             prefix=args.prefix,
-            initialize=True,
+            initialize=False,
         )
 
 

@@ -151,7 +151,7 @@
     </body>
     <body name="battery_tray" pos="-0.550000 0.200000 0.535000">
       <freejoint name="battery_tray_freejoint" />
-      <geom name="battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" />
+      <geom name="battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
     </body>
     <body name="battery_cell_1" pos="-0.620000 0.155000 0.620000">
       <freejoint name="battery_cell_1_freejoint" />
@@ -208,13 +208,12 @@
         <geom name="bin_cell_wall_left" type="box" pos="-0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
         <geom name="bin_cell_wall_right" type="box" pos="0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
         <geom name="bin_cell_wall_front" type="box" pos="0 -0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
-        <geom name="bin_cell_wall_back" type="box" pos="0 0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
+        <geom name="bin_cell_wall_back" type="box" pos="0 0.175000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" />
       </body>
     </body>
-    <geom name="floor" type="plane" pos="0 0 -0.10" size="4 4 0.1" rgba="0.16 0.18 0.21 1" friction="1 0.005 0.0001" />
     <body name="pack2_battery_tray" pos="0.750000 0.200000 0.535000">
       <freejoint name="pack2_battery_tray_freejoint" />
-      <geom name="pack2_battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" />
+      <geom name="pack2_battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
     </body>
     <body name="pack2_battery_cover" pos="0.750000 0.200000 0.706000">
       <freejoint name="pack2_battery_cover_freejoint" />
@@ -251,21 +250,22 @@
       <geom name="pack2_battery_cell_4_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_cell_4_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="empty_tray_bin" pos="1.580000 0.680000 0.000000">
-      <geom name="empty_tray_bin_bottom" type="box" pos="0 0 0.020" size="0.36 0.29 0.020" rgba="0.18 0.42 0.22 1" friction="1.0 0.005 0.0001" />
-      <geom name="empty_tray_bin_wall_left" type="box" pos="-0.35 0 0.235" size="0.010 0.29 0.215" rgba="0.18 0.42 0.22 1" />
-      <geom name="empty_tray_bin_wall_front" type="box" pos="0 -0.28 0.235" size="0.36 0.010 0.215" rgba="0.18 0.42 0.22 1" />
-      <geom name="empty_tray_bin_wall_back" type="box" pos="0 0.28 0.235" size="0.36 0.010 0.215" rgba="0.18 0.42 0.22 1" />
+    <body name="empty_tray_bin" pos="-2.780000 0.200000 0.000000">
+      <geom name="empty_tray_bin_bottom" type="box" pos="0 0 0.020" size="0.36 0.29 0.020" rgba="0.18 0.65 0.30 0.75" friction="1.0 0.005 0.0001" contype="1" conaffinity="1" condim="3" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
+      <geom name="empty_tray_bin_wall_left" type="box" pos="-0.35 0 0.235" size="0.010 0.29 0.215" rgba="0.18 0.65 0.30 0.75" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
+      <geom name="empty_tray_bin_wall_front" type="box" pos="0 -0.28 0.235" size="0.36 0.010 0.215" rgba="0.18 0.65 0.30 0.75" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
+      <geom name="empty_tray_bin_wall_back" type="box" pos="0 0.28 0.235" size="0.36 0.010 0.215" rgba="0.18 0.65 0.30 0.75" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
       <geom name="empty_tray_bin_leg_1" type="box" pos="-0.28 -0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
       <geom name="empty_tray_bin_leg_2" type="box" pos="-0.28 0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
       <geom name="empty_tray_bin_leg_3" type="box" pos="0.28 -0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
       <geom name="empty_tray_bin_leg_4" type="box" pos="0.28 0.22 -0.030" size="0.025 0.025 0.050" rgba="0.25 0.25 0.27 1" />
+      <geom name="empty_tray_bin_wall_right" type="box" pos="0.35 0 0.235" size="0.010 0.29 0.215" rgba="0.18 0.65 0.30 0.75" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
+      <geom name="empty_tray_bin_collision_floor" type="box" pos="0.000000 0.000000 -0.010000" size="0.360000 0.290000 0.050000" rgba="0 0 0 0" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
     </body>
     <body name="bin_cell_2" pos="0.000000 -0.550000 0.000000">
       <geom name="bin_cell_2_bottom" type="box" pos="0 0 -0.080000" size="0.240000 0.220000 0.020000" rgba="0.12 0.35 0.75 1" friction="1.0 0.005 0.0001" />
       <geom name="bin_cell_2_wall_left" type="box" pos="-0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
       <geom name="bin_cell_2_wall_right" type="box" pos="0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
-      <geom name="bin_cell_2_wall_front" type="box" pos="0 -0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
       <geom name="bin_cell_2_wall_back" type="box" pos="0 0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
     </body>
   </worldbody>

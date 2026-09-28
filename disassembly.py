@@ -1171,7 +1171,12 @@ class Controller:
 
         left=self.id("geom",b+"_wall_left")
         right=self.id("geom",b+"_wall_right")
-        front=self.id("geom",b+"_wall_front")
+        # 两个蓝色电芯箱共用一块中间挡板。
+        # 对 bin_cell_2 来说，bin_cell_wall_back 就是它的前挡板。
+        if b == "bin_cell_2":
+            front=self.id("geom","bin_cell_wall_back")
+        else:
+            front=self.id("geom",b+"_wall_front")
         back=self.id("geom",b+"_wall_back")
 
         low=np.array([
