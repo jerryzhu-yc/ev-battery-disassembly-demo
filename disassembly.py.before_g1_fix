@@ -16,18 +16,6 @@ import numpy as np
 JOINTS = ["shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint",
           "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"]
 ACTUATORS = ["shoulder_pan", "shoulder_lift", "elbow", "wrist_1", "wrist_2", "wrist_3"]
-# UR5e 专用初始关节姿态。
-# 不再依赖通用名称 "home" 的 MuJoCo keyframe，
-# 避免加入其他机器人（例如 Unitree G1）后发生 key 名称冲突。
-UR5E_HOME_Q = np.array([
-    -1.831428077,
-    -1.442282176,
-     0.9637521567,
-    -1.09226545,
-    -1.570797549,
-    -0.2606328797,
-], dtype=float)
-
 PARTS = ["battery_cover", "battery_busbar_1", "battery_busbar_2"] + [
     f"battery_cell_{i}" for i in range(1, 5)]
 DESTINATIONS = ["bin_cover", "bin_busbar", "bin_busbar"] + ["bin_cell"] * 4
@@ -156,34 +144,7 @@ class Controller:
             flush=True
         )
 
-        # 不使用通用名称 "base"。
-        # 加入 Unitree G1 等第二台机器人后，场景里可能存在多个 base。
-        #
-        # shoulder_pan_joint 已经明确解析为 UR5e 关节，
-        # 因此从它所属 body 的 parent 反推出 UR5e base。
-        shoulder_body = int(
-            model.jnt_bodyid[
-                self.jids[0]
-            ]
-        )
-
-        self.base = int(
-            model.body_parentid[
-                shoulder_body
-            ]
-        )
-
-        ur5e_base_name = mj.mj_id2name(
-            model,
-            mj.mjtObj.mjOBJ_BODY,
-            self.base,
-        )
-
-        print(
-            "[UR5e] resolved base:",
-            ur5e_base_name,
-            flush=True,
-        )
+        self.base = self.id("body", "base")
         self.part_ids = {n: self.id("body", n) for n in PARTS}
         self.part_geoms = {n: self.id("geom", n+"_geom") for n in PARTS}
         self.part_sites = {n: self.id("site", n+"_top_site") for n in PARTS}
@@ -209,17 +170,14 @@ class Controller:
         self.frame_dt = self.steps_per_frame * model.opt.timestep
         self.next_frame = time.monotonic()
         if initialize:
-            # 只初始化 UR5e 的六个关节。
-            #
-            # 不再读取名为 "home" 的全局 keyframe，
-            # 因为多机器人场景中 G1 也可能包含自己的 home/keyframe。
-            self.d.qpos[self.qa] = UR5E_HOME_Q
-
-            self.d.qvel[self.va] = 0.0
-
-            self.d.ctrl[self.aids] = (
-                self.d.qpos[self.qa]
-            )
+            k = self.optional_id("key", "home")
+            if k >= 0:
+                # Change only this robot and its parts, not unrelated Orca actors.
+                self.d.qpos[self.qa] = model.key_qpos[k, self.qa]
+            else:
+                self.d.qpos[self.qa] = [-1.8, -1.4, 1.2, -1.4, -1.57, -.23]
+            self.d.qvel[self.va] = 0
+            self.d.ctrl[self.aids] = self.d.qpos[self.qa]
         mj.mj_forward(model, self.d)
         self.base_pos = self.d.xpos[self.base].copy()
         self.validate_bins()
