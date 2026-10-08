@@ -266,103 +266,41 @@ def set_free_pose(
 # ============================================================
 
 class HoldBodies:
-    """
-    在仿真过程中固定指定的 freejoint 物体。
-
-    第一包拆解时：
-        固定 tray 和等待中的第二包。
-
-    第二包拆解时：
-        固定 tray，以及尚未被机器人抓取的第二包零件。
-
-    release_when_attached=True 时，
-    某个零件一旦被吸盘抓住，就自动解除对该零件的固定，
-    之后由机器人正常搬运。
-    """
 
     def __init__(
         self,
         session,
         controller,
         body_names,
-        release_when_attached=False,
     ):
         self.session = session
-
-        self.release_when_attached = (
-            release_when_attached
-        )
-
-        # 已经被机器人抓取过的物体 ID。
-        # 一旦进入这里，之后就不再恢复原位。
-        self.released_body_ids = set()
-
         self.entries = []
 
         for name in body_names:
 
-            bid = controller.id(
-                "body",
-                name,
-            )
-
             qa, va, pose = get_free_pose(
                 controller,
-                name,
+                name
             )
 
             self.entries.append(
                 (
                     name,
-                    bid,
                     qa,
                     va,
-                    pose.copy(),
+                    pose,
                 )
             )
 
     def __call__(self, controller):
 
-        # 当前吸盘正在抓取的零件对应的 MuJoCo body ID。
-        attached_bid = None
-
-        if controller.attached is not None:
-            attached_bid = int(
-                controller.part_ids[
-                    controller.attached
-                ]
-            )
-
         for (
             name,
-            bid,
             qa,
             va,
             pose,
         ) in self.entries:
 
-            # 已经解除固定的零件以后不再处理。
-            if bid in self.released_body_ids:
-                continue
-
-            # 第二包零件被吸盘抓住后立即解除固定。
-            if (
-                self.release_when_attached
-                and attached_bid == bid
-            ):
-                self.released_body_ids.add(
-                    bid
-                )
-
-                print(
-                    f"[HOLD RELEASE] {name}",
-                    flush=True,
-                )
-
-                continue
-
-            # 尚未抓取的物体保持在记录的位置，
-            # 防止机器人接近过程中因为重力或碰撞发生漂移。
             set_free_pose(
                 controller,
                 qa,
@@ -372,7 +310,7 @@ class HoldBodies:
 
         mujoco.mj_forward(
             controller.m,
-            controller.d,
+            controller.d
         )
 
         self.session.sync(
@@ -388,12 +326,6 @@ def ready_above_cover(
     controller,
     session,
 ):
-    """
-    从机械臂当前位置平滑移动到当前电池包盖板上方。
-
-    不直接修改 qpos，因此第一包结束切换到第二包时
-    机械臂不会瞬间刷新到另一个位置。
-    """
 
     cover_site = controller.d.site_xpos[
         controller.part_sites[
@@ -408,35 +340,33 @@ def ready_above_cover(
         )
     )
 
-    print()
-    print(
-        "[READY] moving from current TCP:",
-        np.round(
-            controller.d.site_xpos[
-                controller.sid
-            ],
-            3
-        ),
-        "->",
-        np.round(target, 3),
-        flush=True,
+    q = controller.solve(
+        target,
+        controller.d.qpos[
+            controller.qa
+        ].copy()
     )
 
-    # 使用现有的安全 transfer：
-    #
-    # 当前点
-    #   -> 收回到安全半径
-    #   -> 圆弧转向
-    #   -> 移动到新电池包上方
-    controller.transfer(
-        target[:2],
-        float(target[2]),
-        "ready",
+    controller.d.qpos[
+        controller.qa
+    ] = q
+
+    controller.d.qvel[
+        controller.va
+    ] = 0.0
+
+    controller.d.ctrl[
+        controller.aids
+    ] = q
+
+    mujoco.mj_forward(
+        controller.m,
+        controller.d
     )
 
     session.sync(
         controller,
-        force=True,
+        force=True
     )
 
 
@@ -1342,9 +1272,7 @@ def store_empty_tray_in_bin(
         direction[:] = 0
 
 
-    # 空托盘已经位于绿色回收箱正上方。
-    # 此时取消水平速度，让托盘依靠重力垂直落入箱内。
-    conveyor_exit_speed = 0.0
+    conveyor_exit_speed = .08
 
 
     controller.d.qvel[
@@ -1943,27 +1871,18 @@ def main():
             session.data,
             config=config,
             prefix=args.prefix,
-            initialize=False,
+            initialize=True,
         )
 
 
-        # 第二包拆解阶段：
-        #
-        # 1. 两个 tray 始终固定；
-        # 2. 第二包尚未抓取的零件也保持固定；
-        # 3. 某个零件被吸盘抓住后，自动解除该零件的固定。
-        #
-        # pack2_bodies[0] 是 TRAY2，
-        # 所以 [1:] 是 cover / busbars / cells。
+        # 第二包拆解期间只固定第二个 tray。
         hold_batch2 = HoldBodies(
             session,
             c2,
             [
                 TRAY2,
                 TRAY1,
-                *pack2_bodies[1:],
             ],
-            release_when_attached=True,
         )
 
         c2.on_frame = hold_batch2
