@@ -58,12 +58,12 @@
   </asset>
   <worldbody>
     <light name="spotlight" mode="targetbodycom" target="wrist_2_link" pos="0 -1 2" />
-    <body name="ur5e_pedestal" pos="-0.55 -0.32 -0.10">
+    <body name="ur5e_pedestal" pos="-0.55 -0.32 0.00">
       <geom name="pedestal_bottom_plate" type="box" pos="0 0 0.025" size="0.16 0.16 0.025" rgba="0.18 0.18 0.20 1" />
       <geom name="pedestal_column" type="box" pos="0 0 0.26" size="0.11 0.11 0.235" rgba="0.28 0.28 0.30 1" />
       <geom name="pedestal_top_plate" type="box" pos="0 0 0.50" size="0.14 0.14 0.02" rgba="0.15 0.15 0.17 1" />
     </body>
-    <body name="base" pos="-0.55 -0.32 0.42" quat="0 0 0 -1" childclass="ur5e">
+    <body name="base" pos="-0.55 -0.32 0.52" quat="0 0 0 -1" childclass="ur5e">
       <inertial mass="4.0" pos="0 0 0" diaginertia="0.00443333156 0.00443333156 0.0072" />
       <geom mesh="base_0" material="black" class="visual" />
       <geom mesh="base_1" material="jointgray" class="visual" />
@@ -130,7 +130,7 @@
         </body>
       </body>
     </body>
-    <body name="disassembly_station" pos="-0.550000 0.200000 0.400000">
+    <body name="disassembly_station" pos="-0.550000 0.200000 0.500000">
       <geom name="conveyor_belt_visual" type="box" pos="0 0 0.075" size="1.800000 0.180000 0.025000" rgba="0.04 0.04 0.045 1" />
       <geom name="conveyor_left_rail" type="box" pos="0 0.205 0.12" size="1.820000 0.015000 0.035000" rgba="0.55 0.55 0.58 1" />
       <geom name="conveyor_right_rail" type="box" pos="0 -0.205 0.12" size="1.820000 0.015000 0.035000" rgba="0.55 0.55 0.58 1" />
@@ -149,46 +149,46 @@
       <geom name="conveyor_crossbeam_2" type="box" pos="0.0 0 -0.015" size="0.045 0.21 0.025" rgba="0.28 0.28 0.30 1" />
       <geom name="conveyor_crossbeam_3" type="box" pos="1.4 0 -0.015" size="0.045 0.21 0.025" rgba="0.28 0.28 0.30 1" />
     </body>
-    <body name="battery_tray" pos="-0.550000 0.200000 0.535000">
+    <body name="battery_tray" pos="-0.550000 0.200000 0.635000">
       <freejoint name="battery_tray_freejoint" />
       <geom name="battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
     </body>
-    <body name="battery_cell_1" pos="-0.620000 0.155000 0.620000">
+    <body name="battery_cell_1" pos="-0.620000 0.155000 0.720000">
       <freejoint name="battery_cell_1_freejoint" />
       <geom name="battery_cell_1_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="battery_cell_1_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="battery_cell_2" pos="-0.480000 0.155000 0.620000">
+    <body name="battery_cell_2" pos="-0.480000 0.155000 0.720000">
       <freejoint name="battery_cell_2_freejoint" />
       <geom name="battery_cell_2_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="battery_cell_2_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="battery_cell_3" pos="-0.620000 0.245000 0.620000">
+    <body name="battery_cell_3" pos="-0.620000 0.245000 0.720000">
       <freejoint name="battery_cell_3_freejoint" />
       <geom name="battery_cell_3_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="battery_cell_3_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="battery_cell_4" pos="-0.480000 0.245000 0.620000">
+    <body name="battery_cell_4" pos="-0.480000 0.245000 0.720000">
       <freejoint name="battery_cell_4_freejoint" />
       <geom name="battery_cell_4_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="battery_cell_4_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="battery_busbar_1" pos="-0.620000 0.200000 0.680000">
+    <body name="battery_busbar_1" pos="-0.620000 0.200000 0.780000">
       <freejoint name="battery_busbar_1_freejoint" />
       <geom name="battery_busbar_1_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
       <site name="battery_busbar_1_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="battery_busbar_2" pos="-0.480000 0.200000 0.680000">
+    <body name="battery_busbar_2" pos="-0.480000 0.200000 0.780000">
       <freejoint name="battery_busbar_2_freejoint" />
       <geom name="battery_busbar_2_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
       <site name="battery_busbar_2_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="battery_cover" pos="-0.550000 0.200000 0.706000">
+    <body name="battery_cover" pos="-0.550000 0.200000 0.806000">
       <freejoint name="battery_cover_freejoint" />
       <geom name="battery_cover_geom" type="box" pos="0 0 0" size="0.25 0.17 0.016" rgba="0.10 0.10 0.12 1" mass="1.2" friction="0.9 0.005 0.0002" />
       <site name="battery_cover_top_site" pos="0 0 0.016000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="ground_sort_bins">
+    <body name="ground_sort_bins" pos="0 0 0.10">
       <body name="bin_cover" pos="-1.080000 -0.900000 0.000000">
         <geom name="bin_cover_bottom" type="box" pos="0.000000 0.180000 -0.080000" size="0.320000 0.420000 0.020000" rgba="0.55 0.12 0.12 1" friction="1.0 0.005 0.0001" />
         <geom name="bin_cover_wall_left" type="box" pos="-0.310000 0.180000 0.040000" size="0.010000 0.420000 0.100000" rgba="0.55 0.12 0.12 1" />
@@ -211,46 +211,46 @@
         <geom name="bin_cell_wall_back" type="box" pos="0 0.175000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" />
       </body>
     </body>
-    <body name="pack2_battery_tray" pos="0.750000 0.200000 0.535000">
+    <body name="pack2_battery_tray" pos="0.750000 0.200000 0.635000">
       <freejoint name="pack2_battery_tray_freejoint" />
       <geom name="pack2_battery_tray_geom" type="box" pos="0 0 0" size="0.24 0.16 0.035" rgba="0.05 0.08 0.12 1" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
     </body>
-    <body name="pack2_battery_cover" pos="0.750000 0.200000 0.706000">
+    <body name="pack2_battery_cover" pos="0.750000 0.200000 0.806000">
       <freejoint name="pack2_battery_cover_freejoint" />
       <geom name="pack2_battery_cover_geom" type="box" pos="0 0 0" size="0.25 0.17 0.016" rgba="0.10 0.10 0.12 1" mass="1.2" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_cover_top_site" pos="0 0 0.016000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="pack2_battery_busbar_1" pos="0.680000 0.200000 0.680000">
+    <body name="pack2_battery_busbar_1" pos="0.680000 0.200000 0.780000">
       <freejoint name="pack2_battery_busbar_1_freejoint" />
       <geom name="pack2_battery_busbar_1_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_busbar_1_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="pack2_battery_busbar_2" pos="0.820000 0.200000 0.680000">
+    <body name="pack2_battery_busbar_2" pos="0.820000 0.200000 0.780000">
       <freejoint name="pack2_battery_busbar_2_freejoint" />
       <geom name="pack2_battery_busbar_2_geom" type="box" pos="0 0 0" size="0.012 0.12 0.008" rgba="0.85 0.42 0.08 1" mass="0.12" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_busbar_2_top_site" pos="0 0 0.008000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="pack2_battery_cell_1" pos="0.680000 0.155000 0.620000">
+    <body name="pack2_battery_cell_1" pos="0.680000 0.155000 0.720000">
       <freejoint name="pack2_battery_cell_1_freejoint" />
       <geom name="pack2_battery_cell_1_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_cell_1_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="pack2_battery_cell_2" pos="0.820000 0.155000 0.620000">
+    <body name="pack2_battery_cell_2" pos="0.820000 0.155000 0.720000">
       <freejoint name="pack2_battery_cell_2_freejoint" />
       <geom name="pack2_battery_cell_2_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_cell_2_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="pack2_battery_cell_3" pos="0.680000 0.245000 0.620000">
+    <body name="pack2_battery_cell_3" pos="0.680000 0.245000 0.720000">
       <freejoint name="pack2_battery_cell_3_freejoint" />
       <geom name="pack2_battery_cell_3_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_cell_3_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="pack2_battery_cell_4" pos="0.820000 0.245000 0.620000">
+    <body name="pack2_battery_cell_4" pos="0.820000 0.245000 0.720000">
       <freejoint name="pack2_battery_cell_4_freejoint" />
       <geom name="pack2_battery_cell_4_geom" type="cylinder" pos="0 0 0" size="0.028 0.05" rgba="0.86 0.76 0.10 1" mass="0.4" friction="0.9 0.005 0.0002" />
       <site name="pack2_battery_cell_4_top_site" pos="0 0 0.050000" size="0.006" rgba="1 0 0 0.7" />
     </body>
-    <body name="empty_tray_bin" pos="-2.780000 0.200000 0.000000">
+    <body name="empty_tray_bin" pos="-2.780000 0.200000 0.100000">
       <geom name="empty_tray_bin_bottom" type="box" pos="0 0 0.020" size="0.36 0.29 0.020" rgba="0.18 0.65 0.30 0.75" friction="1.0 0.005 0.0001" contype="1" conaffinity="1" condim="3" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
       <geom name="empty_tray_bin_wall_left" type="box" pos="-0.35 0 0.235" size="0.010 0.29 0.215" rgba="0.18 0.65 0.30 0.75" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
       <geom name="empty_tray_bin_wall_front" type="box" pos="0 -0.28 0.235" size="0.36 0.010 0.215" rgba="0.18 0.65 0.30 0.75" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
@@ -262,18 +262,17 @@
       <geom name="empty_tray_bin_wall_right" type="box" pos="0.35 0 0.235" size="0.010 0.29 0.215" rgba="0.18 0.65 0.30 0.75" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
       <geom name="empty_tray_bin_collision_floor" type="box" pos="0.000000 0.000000 -0.010000" size="0.360000 0.290000 0.050000" rgba="0 0 0 0" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" margin="0.002" />
     </body>
-    <body name="bin_cell_2" pos="0.000000 -0.550000 0.000000">
+    <body name="bin_cell_2" pos="0.000000 -0.550000 0.100000">
       <geom name="bin_cell_2_bottom" type="box" pos="0 0 -0.080000" size="0.240000 0.220000 0.020000" rgba="0.12 0.35 0.75 1" friction="1.0 0.005 0.0001" />
       <geom name="bin_cell_2_wall_left" type="box" pos="-0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
       <geom name="bin_cell_2_wall_right" type="box" pos="0.230000 0 0.040000" size="0.010000 0.220000 0.100000" rgba="0.12 0.35 0.75 1" />
       <geom name="bin_cell_2_wall_back" type="box" pos="0 0.210000 0.040000" size="0.240000 0.010000 0.100000" rgba="0.12 0.35 0.75 1" />
     </body>
     <body name="professional_workcell" pos="0 0 0">
-      <geom name="industrial_floor_zone" type="box" pos="-0.30 -0.28 -0.096" size="2.25 1.28 0.004" rgba="0.15 0.17 0.19 1" contype="0" conaffinity="0" group="2" />
-      <geom name="safety_line_front" type="box" pos="-0.30 -1.54 -0.089" size="2.25 0.025 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
-      <geom name="safety_line_back" type="box" pos="-0.30 0.98 -0.089" size="2.25 0.025 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
-      <geom name="safety_line_left" type="box" pos="-2.525 -0.28 -0.089" size="0.025 1.28 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
-      <geom name="safety_line_right" type="box" pos="1.925 -0.28 -0.089" size="0.025 1.28 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
+      <geom name="safety_line_front" type="box" pos="-0.30 -1.54 0.004" size="2.25 0.025 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
+      <geom name="safety_line_back" type="box" pos="-0.30 0.98 0.004" size="2.25 0.025 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
+      <geom name="safety_line_left" type="box" pos="-2.525 -0.28 0.004" size="0.025 1.28 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
+      <geom name="safety_line_right" type="box" pos="1.925 -0.28 0.004" size="0.025 1.28 0.003" rgba="0.95 0.72 0.05 1" contype="0" conaffinity="0" group="2" />
       <geom name="guard_post_back_1" type="box" pos="-2.25 1.03 0.78" size="0.035 0.035 0.78" rgba="0.18 0.20 0.22 1" contype="0" conaffinity="0" group="2" />
       <geom name="guard_post_back_2" type="box" pos="-1.15 1.03 0.78" size="0.035 0.035 0.78" rgba="0.18 0.20 0.22 1" contype="0" conaffinity="0" group="2" />
       <geom name="guard_post_back_3" type="box" pos="-0.05 1.03 0.78" size="0.035 0.035 0.78" rgba="0.18 0.20 0.22 1" contype="0" conaffinity="0" group="2" />

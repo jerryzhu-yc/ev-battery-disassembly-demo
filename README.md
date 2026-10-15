@@ -368,6 +368,7 @@ ev-battery-disassembly-demo/
 ├── .gitignore
 │
 ├── scene_two_pack.xml
+├── ur5e_arm.xml
 ├── disassembly.py
 ├── run_orca.py
 ├── run_two_pack_orca.py
@@ -385,11 +386,8 @@ ev-battery-disassembly-demo/
 
 ### `scene_two_pack.xml`
 
-当前最终工作站场景，包含：
+工作站场景（机械臂本体单独放在 `ur5e_arm.xml`），包含：
 
-- UR5e
-- 机器人基座
-- SMC 风格吸盘
 - 双电池包
 - 输送带
 - 分类料箱
@@ -397,6 +395,14 @@ ev-battery-disassembly-demo/
 - 工业工作站外围设施
 - MuJoCo collision geometry
 - Lights / markers / safety-area visuals
+
+### `ur5e_arm.xml`
+
+UR5e 机械臂资产，在 OrcaStudio 中与场景分开导入，包含：
+
+- UR5e
+- 机器人基座
+- SMC 风格吸盘
 
 ### `disassembly.py`
 
@@ -519,24 +525,36 @@ conda activate orcalab
 
 ### 3. Load Scene
 
-在 OrcaStudio 中导入：
+在 OrcaStudio 中依次导入**两个** XML 文件：
 
 ```text
-scene_two_pack.xml
+scene_two_pack.xml    # 输送线、电池包、分类料箱、回收箱及外围设施
+ur5e_arm.xml          # UR5e 机械臂（独立导入的资产）
 ```
 
-启动仿真，并确保 gRPC 服务运行于：
+机械臂与场景是两个独立资产，导入后 UR5e 的初始位置不一定是正确的，
+需要**手动拖动 UR5e** 到拆解工位：
+
+- 位于**输送带正前方**（正对传送带上的拆解工位）
+- 位于**三个分类料箱（上盖 / 汇流排 / 电芯）的中间**，使左右两侧料箱都落在机械臂工作空间内
+
+摆好位置后再启动仿真，并确保 gRPC 服务运行于：
 
 ```text
 localhost:50051
 ```
+
+> 因为机械臂是独立资产，它的命名空间与场景不同
+> （场景为 `scene_two_pack_usda_`，机械臂为 `ur5e_arm_usda_`），
+> 所以运行时需要分别用 `--prefix` 和 `--arm-prefix` 指定，详见下一节。
 
 ### 4. Run Two-Pack Demo
 
 ```bash
 python run_two_pack_orca.py \
   --addr localhost:50051 \
-  --prefix scene_two_pack_usda_
+  --prefix scene_two_pack_usda_ \
+  --arm-prefix ur5e_arm_usda_
 ```
 
 当前测试运动速度约为：
@@ -552,19 +570,33 @@ Joint speed     : 1.600 rad/s
 
 OrcaStudio 导入场景后可能为对象添加 namespace / prefix。
 
-当前常用：
+当前场景对象常用：
 
 ```text
 scene_two_pack_usda_
 ```
 
-因此运行时需要：
+如果机械臂是作为**独立资产**导入的（例如单独的 `ur5e_arm.xml`），它的
+关节 / 执行器 / `suction_tcp` 会归到另一个命名空间下，例如：
 
-```bash
---prefix scene_two_pack_usda_
+```text
+ur5e_arm_usda_
 ```
 
-如果修改 XML 文件名、导入名称或 OrcaStudio scene namespace，请同步检查该参数。
+因此运行时需要分别指定两个前缀：
+
+```bash
+--prefix scene_two_pack_usda_ \
+--arm-prefix ur5e_arm_usda_
+```
+
+`--arm-prefix` 只作用于机械臂的关节、执行器和 `suction_tcp`；其余场景对象
+（零件、料箱、fixture、site）仍使用 `--prefix`。若机械臂与场景在同一个资产里
+（单命名空间），可省略 `--arm-prefix`，此时它会沿用 `--prefix`。
+
+可用 `python run_orca.py --addr localhost:50051 --list-names` 查看导入后的
+真实名字。如果修改 XML 文件名、导入名称或 OrcaStudio scene namespace，
+请同步检查这两个参数。
 
 ---
 

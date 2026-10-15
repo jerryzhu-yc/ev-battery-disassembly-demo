@@ -68,7 +68,8 @@ def main():
     here=Path(__file__).resolve().parent
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--addr",default="localhost:50051")
-    p.add_argument("--prefix",default="",help="Exact imported name prefix, such as Robot1_.")
+    p.add_argument("--prefix",default="",help="Exact imported name prefix for the scene, such as scene_two_pack_usda_.")
+    p.add_argument("--arm-prefix",default=None,help="Exact imported name prefix for the robot arm when it is a separate asset (e.g. ur5e_arm_usda_). Defaults to --prefix.")
     p.add_argument("--offline",action="store_true",help="Test installed SDK locally, without OrcaStudio.")
     p.add_argument("--xml",type=Path,default=here/"scene_two_pack.xml",help="Used only with --offline.")
     p.add_argument("--list-names",action="store_true",help="Print downloaded joint/site/body names and exit.")
@@ -89,7 +90,7 @@ def main():
                 print(obj.name,[mujoco.mj_id2name(s.model,obj,i) for i in range(count)])
             return 0
         cfg=Config(realtime=not(a.offline or a.fast))
-        c=Controller(s.model,s.data,config=cfg,prefix=a.prefix,on_frame=s.sync)
+        c=Controller(s.model,s.data,config=cfg,prefix=a.prefix,arm_prefix=a.arm_prefix,on_frame=s.sync)
         c.report["backend"]="orca_sdk_offline" if a.offline else "orca_studio_connected"
         c.report["orca_address"]=None if a.offline else a.addr
         # Imported name prefixes are resolved by name, never by fixed array indices.
@@ -110,7 +111,7 @@ def main():
         return 130
     except Exception as e:
         print(f"STOPPED: {type(e).__name__}: {e}",file=sys.stderr)
-        print("Live mode: import scene_two_pack.xml with assets/, press Run in Orca, verify --addr and --prefix.",file=sys.stderr)
+        print("Live mode: import scene_two_pack.xml with assets/, press Run in Orca, verify --addr, --prefix and --arm-prefix.",file=sys.stderr)
         if c is not None:
             c.report["success"]=False
             c.report["error"]=f"{type(e).__name__}: {e}"

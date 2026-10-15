@@ -185,10 +185,11 @@ class Pack2Controller(Controller):
 
         return name
 
-    def optional_id(self, kind, name):
+    def optional_id(self, kind, name, prefix=None):
         return super().optional_id(
             kind,
-            self.map_name(name)
+            self.map_name(name),
+            prefix,
         )
 
 
@@ -578,7 +579,7 @@ def archive_pack1_parts(
 
         pose[0] = -3.0
         pose[1] = -1.7 + i*0.15
-        pose[2] = 0.20
+        pose[2] = 0.30
 
         set_free_pose(
             controller,
@@ -616,16 +617,16 @@ def drop_empty_tray_into_bin(
         tray_name
     )
 
-    # 回收箱底板顶面约 z = 0.04
+    # 回收箱底板顶面约 z = 0.14
     #
     # tray half height = 0.035
     #
     # 最终 tray center：
-    #     0.04 + 0.035 + 0.01
-    #   ≈ 0.085
+    #     0.14 + 0.035 + 0.01
+    #   ≈ 0.185
     #
     # 稍微留一点视觉间隙。
-    target_z = 0.090
+    target_z = 0.190
 
     frames = max(
         2,
@@ -1757,6 +1758,15 @@ def main():
     )
 
     parser.add_argument(
+        "--arm-prefix",
+        default=None,
+        help=(
+            "机械臂独立资产的命名空间前缀，例如 ur5e_arm_usda_。"
+            "默认沿用 --prefix。"
+        ),
+    )
+
+    parser.add_argument(
         "--fast",
         action="store_true",
     )
@@ -1804,6 +1814,7 @@ def main():
             session.data,
             config=config,
             prefix=args.prefix,
+            arm_prefix=args.arm_prefix,
             initialize=True,
         )
 
@@ -1943,6 +1954,7 @@ def main():
             session.data,
             config=config,
             prefix=args.prefix,
+            arm_prefix=args.arm_prefix,
             initialize=False,
         )
 

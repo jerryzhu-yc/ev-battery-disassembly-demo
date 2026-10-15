@@ -44,9 +44,9 @@ class ViewerClosed(MotionError):
 
 @dataclass
 class Config:
-    travel_z: float = 1.00
+    travel_z: float = 1.10
     transit_radius: float = .50
-    bin_hover_z: float = .36
+    bin_hover_z: float = .46
     grasp_gap: float = .001
     grasp_tolerance: float = .006
     angle_tolerance: float = math.radians(2)
@@ -60,21 +60,26 @@ class Config:
     realtime: bool = False
 
 class Controller:
-    def __init__(self, model, data=None, *, config=None, prefix="", initialize=True, on_frame=None):
+    def __init__(self, model, data=None, *, config=None, prefix="", arm_prefix=None,
+                 initialize=True, on_frame=None):
         self.m = model
         self.d = data if data is not None else mj.MjData(model)
         self.cfg = config or Config()
         self.prefix = prefix
+        # 机械臂可能被 OrcaStudio 作为独立资产导入，从而拥有自己的命名空间
+        # （例如 ur5e_arm_usda_），与场景对象的前缀（scene_two_pack_usda_）不同。
+        # arm_prefix=None 时沿用 prefix，保持单资产场景下的旧行为。
+        self.arm_prefix = prefix if arm_prefix is None else arm_prefix
         self.on_frame = on_frame
-        self.jids = [self.id("joint", n) for n in JOINTS]
+        self.jids = [self.id("joint", n, self.arm_prefix) for n in JOINTS]
         self.qa = model.jnt_qposadr[self.jids].copy()
         self.va = model.jnt_dofadr[self.jids].copy()
-        self.aids = [self.id("actuator", n) for n in ACTUATORS]
+        self.aids = [self.id("actuator", n, self.arm_prefix) for n in ACTUATORS]
         if np.any(model.jnt_type[self.jids] != mj.mjtJoint.mjJNT_HINGE):
             raise MotionError("The six arm joints must be hinge joints.")
         if np.any(model.actuator_trnid[self.aids, 0] != self.jids):
             raise MotionError("Actuator/joint transmission mismatch.")
-        self.sid = self.id("site", "suction_tcp")
+        self.sid = self.id("site", "suction_tcp", self.arm_prefix)
 
         # -----------------------------------------------------
         # Resolve the physical suction-tool body.
@@ -224,9 +229,10 @@ class Controller:
         self.base_pos = self.d.xpos[self.base].copy()
         self.validate_bins()
 
-    def optional_id(self, kind, name):
+    def optional_id(self, kind, name, prefix=None):
         obj = getattr(mj.mjtObj, "mjOBJ_"+kind.upper())
-        requested = self.prefix + name
+        base = self.prefix if prefix is None else prefix
+        requested = base + name
         exact = mj.mj_name2id(self.m, obj, requested)
         if exact >= 0:
             return exact
@@ -250,10 +256,11 @@ class Controller:
             )
         return hits[0] if hits else -1
 
-    def id(self, kind, name):
-        i = self.optional_id(kind, name)
+    def id(self, kind, name, prefix=None):
+        i = self.optional_id(kind, name, prefix)
         if i < 0:
-            raise MotionError(f"Missing {kind}: {self.prefix+name}")
+            base = self.prefix if prefix is None else prefix
+            raise MotionError(f"Missing {kind}: {base+name}")
         return i
 
     def validate_bins(self):
@@ -1381,14 +1388,18 @@ class Controller:
         # is close to the edge of the UR5e workspace.
         #
         # Keep roughly 120 mm above the current part while
-        # limiting the high pose to 0.94 m.
+        # limiting the high pose to 1.04 m.
+        #
+        # The lower bound is 0.92 m (was 1.00 m): the far-row cells
+        # (cell_3 / cell_4) sit near the UR5e workspace boundary and
+        # are unreachable at 1.00 m with the downward suction pose.
         safe_high_z = min(
             self.cfg.travel_z,
             max(
                 pick[2] + .12,
-                .90
+                0.92
             ),
-            .94
+            1.04
         )
 
         print(
@@ -1445,7 +1456,7 @@ class Controller:
                 safe_high_z,
                 separation_z + .03
             ),
-            .94
+            1.04
         )
 
         print(
@@ -1517,11 +1528,11 @@ class Controller:
         # Pull inward before rising: high TCP at outer bin radius is unreachable.
         v=xy-self.base_pos[:2];v*=self.cfg.transit_radius/np.linalg.norm(v)
         self.move(np.r_[self.base_pos[:2]+v,self.cfg.bin_hover_z],"return/retract")
-        # Do not return to travel_z=1.0 m.
+        # Do not return to travel_z=1.10 m.
         # At the transit radius that high pose is near the UR5e workspace limit.
         return_z = min(
             self.cfg.travel_z,
-            .90
+            1.00
         )
 
         print(
