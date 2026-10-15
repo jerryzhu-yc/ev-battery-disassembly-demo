@@ -4,131 +4,13 @@
   <option integrator="implicitfast" timestep="0.002">
     <flag multiccd="enable" />
   </option>
-  <default>
-    <default class="ur5e">
-      <material specular="0.5" shininess="0.25" />
-      <joint axis="0 1 0" range="-6.28319 6.28319" armature="0.1" />
-      <general gaintype="fixed" biastype="affine" ctrlrange="-6.2831 6.2831" gainprm="2000" biasprm="0 -2000 -400" forcerange="-150 150" />
-      <default class="size3">
-        <default class="size3_limited">
-          <joint range="-3.1415 3.1415" />
-          <general ctrlrange="-3.1415 3.1415" />
-        </default>
-      </default>
-      <default class="size1">
-        <general gainprm="500" biasprm="0 -500 -100" forcerange="-28 28" />
-      </default>
-      <default class="visual">
-        <geom type="mesh" contype="0" conaffinity="0" group="2" />
-      </default>
-      <default class="collision">
-        <geom type="capsule" group="3" />
-        <default class="eef_collision">
-          <geom type="cylinder" />
-        </default>
-      </default>
-      <site size="0.001" rgba="0.5 0.5 0.5 0.3" group="4" />
-    </default>
-  </default>
-  <asset>
-    <material class="ur5e" name="black" rgba="0.033 0.033 0.033 1" />
-    <material class="ur5e" name="jointgray" rgba="0.278 0.278 0.278 1" />
-    <material class="ur5e" name="linkgray" rgba="0.82 0.82 0.82 1" />
-    <material class="ur5e" name="urblue" rgba="0.49 0.678 0.8 1" />
-    <mesh file="base_0.obj" />
-    <mesh file="base_1.obj" />
-    <mesh file="shoulder_0.obj" />
-    <mesh file="shoulder_1.obj" />
-    <mesh file="shoulder_2.obj" />
-    <mesh file="upperarm_0.obj" />
-    <mesh file="upperarm_1.obj" />
-    <mesh file="upperarm_2.obj" />
-    <mesh file="upperarm_3.obj" />
-    <mesh file="forearm_0.obj" />
-    <mesh file="forearm_1.obj" />
-    <mesh file="forearm_2.obj" />
-    <mesh file="forearm_3.obj" />
-    <mesh file="wrist1_0.obj" />
-    <mesh file="wrist1_1.obj" />
-    <mesh file="wrist1_2.obj" />
-    <mesh file="wrist2_0.obj" />
-    <mesh file="wrist2_1.obj" />
-    <mesh file="wrist2_2.obj" />
-    <mesh file="wrist3.obj" />
-  </asset>
+
   <worldbody>
-    <light name="spotlight" mode="targetbodycom" target="wrist_2_link" pos="0 -1 2" />
-    <body name="ur5e_pedestal" pos="-0.55 -0.32 0.00">
-      <geom name="pedestal_bottom_plate" type="box" pos="0 0 0.025" size="0.16 0.16 0.025" rgba="0.18 0.18 0.20 1" />
-      <geom name="pedestal_column" type="box" pos="0 0 0.26" size="0.11 0.11 0.235" rgba="0.28 0.28 0.30 1" />
-      <geom name="pedestal_top_plate" type="box" pos="0 0 0.50" size="0.14 0.14 0.02" rgba="0.15 0.15 0.17 1" />
-    </body>
-    <body name="base" pos="-0.55 -0.32 0.52" quat="0 0 0 -1" childclass="ur5e">
-      <inertial mass="4.0" pos="0 0 0" diaginertia="0.00443333156 0.00443333156 0.0072" />
-      <geom mesh="base_0" material="black" class="visual" />
-      <geom mesh="base_1" material="jointgray" class="visual" />
-      <body name="shoulder_link" pos="0 0 0.163">
-        <inertial mass="3.7" pos="0 0 0" diaginertia="0.0102675 0.0102675 0.00666" />
-        <joint name="shoulder_pan_joint" class="size3" axis="0 0 1" />
-        <geom mesh="shoulder_0" material="urblue" class="visual" />
-        <geom mesh="shoulder_1" material="black" class="visual" />
-        <geom mesh="shoulder_2" material="jointgray" class="visual" />
-        <geom class="collision" size="0.06 0.06" pos="0 0 -0.04" />
-        <body name="upper_arm_link" pos="0 0.138 0" quat="1 0 1 0">
-          <inertial mass="8.393" pos="0 0 0.2125" diaginertia="0.133886 0.133886 0.0151074" />
-          <joint name="shoulder_lift_joint" class="size3" />
-          <geom mesh="upperarm_0" material="linkgray" class="visual" />
-          <geom mesh="upperarm_1" material="black" class="visual" />
-          <geom mesh="upperarm_2" material="jointgray" class="visual" />
-          <geom mesh="upperarm_3" material="urblue" class="visual" />
-          <geom class="collision" pos="0 -0.04 0" quat="1 1 0 0" size="0.06 0.06" />
-          <geom class="collision" size="0.05 0.2" pos="0 0 0.2" />
-          <body name="forearm_link" pos="0 -0.131 0.425">
-            <inertial mass="2.275" pos="0 0 0.196" diaginertia="0.0311796 0.0311796 0.004095" />
-            <joint name="elbow_joint" class="size3_limited" />
-            <geom mesh="forearm_0" material="urblue" class="visual" />
-            <geom mesh="forearm_1" material="linkgray" class="visual" />
-            <geom mesh="forearm_2" material="black" class="visual" />
-            <geom mesh="forearm_3" material="jointgray" class="visual" />
-            <geom class="collision" pos="0 0.08 0" quat="1 1 0 0" size="0.055 0.06" />
-            <geom class="collision" size="0.038 0.19" pos="0 0 0.2" />
-            <body name="wrist_1_link" pos="0 0 0.392" quat="1 0 1 0">
-              <inertial mass="1.219" pos="0 0.127 0" diaginertia="0.0025599 0.0025599 0.0021942" />
-              <joint name="wrist_1_joint" class="size1" />
-              <geom mesh="wrist1_0" material="black" class="visual" />
-              <geom mesh="wrist1_1" material="urblue" class="visual" />
-              <geom mesh="wrist1_2" material="jointgray" class="visual" />
-              <geom class="collision" pos="0 0.05 0" quat="1 1 0 0" size="0.04 0.07" />
-              <body name="wrist_2_link" pos="0 0.127 0">
-                <inertial mass="1.219" pos="0 0 0.1" diaginertia="0.0025599 0.0025599 0.0021942" />
-                <joint name="wrist_2_joint" axis="0 0 1" class="size1" />
-                <geom mesh="wrist2_0" material="black" class="visual" />
-                <geom mesh="wrist2_1" material="urblue" class="visual" />
-                <geom mesh="wrist2_2" material="jointgray" class="visual" />
-                <geom class="collision" size="0.04 0.06" pos="0 0 0.04" />
-                <geom class="collision" pos="0 0.02 0.1" quat="1 1 0 0" size="0.04 0.04" />
-                <body name="wrist_3_link" pos="0 0 0.1">
-                  <inertial mass="0.1889" pos="0 0.0771683 0" quat="1 0 0 1" diaginertia="0.000132134 9.90863e-05 9.90863e-05" />
-                  <joint name="wrist_3_joint" class="size1" />
-                  <geom material="linkgray" mesh="wrist3" class="visual" />
-                  <geom class="eef_collision" pos="0 0.08 0" quat="1 1 0 0" size="0.04 0.02" />
-                  <site name="attachment_site" pos="0 0.1 0" quat="-1 1 0 0" />
-                  <body name="smc_vacuum_gripper_+Y" pos="0 0.105 0" quat="1 0 0 0">
-                    <geom name="smc_adapter_vis" type="cylinder" pos="0 0.0 0" quat="0.7071068 0.7071068 0 0" size="0.055 0.02" rgba="0.65 0.65 0.68 1" contype="0" conaffinity="0" />
-                    <geom name="smc_blue_ring_vis" type="cylinder" pos="0 0.04 0" quat="0.7071068 0.7071068 0 0" size="0.05 0.012" rgba="0.05 0.30 0.95 1" contype="0" conaffinity="0" />
-                    <geom name="smc_vacuum_body_vis" type="box" pos="0 0.08 0" size="0.045 0.035 0.035" rgba="0.82 0.82 0.80 1" contype="0" conaffinity="0" />
-                    <geom name="smc_vacuum_stem_vis" type="cylinder" pos="0 0.135 0" quat="0.7071068 0.7071068 0 0" size="0.016 0.05" rgba="0.02 0.02 0.02 1" contype="0" conaffinity="0" />
-                    <geom name="smc_suction_neck_vis" type="cylinder" pos="0 0.19 0" quat="0.7071068 0.7071068 0 0" size="0.03 0.02" rgba="0.01 0.01 0.01 1" contype="0" conaffinity="0" />
-                    <geom name="smc_suction_pad_vis" type="cylinder" pos="0 0.23 0" quat="0.7071068 0.7071068 0 0" size="0.085 0.025" rgba="0.005 0.005 0.005 1" contype="0" conaffinity="0" />
-                    <geom name="smc_suction_lip_vis" type="cylinder" pos="0 0.26 0" quat="0.7071068 0.7071068 0 0" size="0.07 0.006" rgba="0.12 0.12 0.12 1" contype="0" conaffinity="0" />
-                    <site name="suction_tcp" pos="0 0.28 0" size="0.015" rgba="1 0 0 1" />
-                  </body>
-                </body>
-              </body>
-            </body>
-          </body>
-        </body>
-      </body>
+    <!-- 工位上方相机：俯视拆解工位，用于检测电池包到位并触发机械臂开始拆解 -->
+    <body name="station_camera_mount" pos="-0.55 0.20 1.75">
+      <geom name="station_camera_housing" type="box" pos="0 0 0.05" size="0.05 0.045 0.035" rgba="0.15 0.15 0.17 1" contype="0" conaffinity="0" group="2" />
+      <geom name="station_camera_lens" type="cylinder" pos="0 0 0.0" size="0.022 0.012" rgba="0.05 0.05 0.06 1" contype="0" conaffinity="0" group="2" />
+      <camera name="station_camera" pos="0 0 -0.02" />
     </body>
     <body name="disassembly_station" pos="-0.550000 0.200000 0.500000">
       <geom name="conveyor_belt_visual" type="box" pos="0 0 0.075" size="1.800000 0.180000 0.025000" rgba="0.04 0.04 0.045 1" />
@@ -325,14 +207,7 @@
     <light name="industrial_light_L" pos="-1.45 -0.90 2.80" dir="0.25 0.10 -1" diffuse="0.78 0.80 0.83" specular="0.18 0.18 0.18" castshadow="true" />
     <light name="industrial_light_R" pos="1.20 0.65 2.70" dir="-0.25 -0.10 -1" diffuse="0.72 0.75 0.80" specular="0.15 0.15 0.15" castshadow="true" />
   </worldbody>
-  <actuator>
-    <general class="size3" name="shoulder_pan" joint="shoulder_pan_joint" />
-    <general class="size3" name="shoulder_lift" joint="shoulder_lift_joint" />
-    <general class="size3_limited" name="elbow" joint="elbow_joint" />
-    <general class="size1" name="wrist_1" joint="wrist_1_joint" />
-    <general class="size1" name="wrist_2" joint="wrist_2_joint" />
-    <general class="size1" name="wrist_3" joint="wrist_3_joint" />
-  </actuator>
+
   <equality>
     <weld name="fixture_battery_cover" body1="battery_cover" active="true" solref="0.008 1" />
     <weld name="fixture_battery_busbar_1" body1="battery_busbar_1" active="true" solref="0.008 1" />
@@ -342,7 +217,4 @@
     <weld name="fixture_battery_cell_3" body1="battery_cell_3" active="true" solref="0.008 1" />
     <weld name="fixture_battery_cell_4" body1="battery_cell_4" active="true" solref="0.008 1" />
   </equality>
-  <keyframe>
-    <key name="home" qpos="-1.831428077 -1.442282176 0.9637521567 -1.09226545 -1.570797549 -0.2606328797 -0.62 0.155 0.62 1 0 0 0 -0.48 0.155 0.62 1 0 0 0 -0.62 0.245 0.62 1 0 0 0 -0.48 0.245 0.62 1 0 0 0 -0.62 0.2 0.68 1 0 0 0 -0.48 0.2 0.68 1 0 0 0 -0.55 0.2 0.706 1 0 0 0" ctrl="-1.831428077 -1.442282176 0.9637521567 -1.09226545 -1.570797549 -0.2606328797" />
-  </keyframe>
 </mujoco>

@@ -39,6 +39,12 @@ TRAY2 = "pack2_battery_tray"
 # scene_two_pack.xml 中第二包比第一包 X 大 1.20 m。
 PACK2_MOVE_X = -1.30
 
+# 工位上方相机（scene_two_pack.xml 中的 <camera name="station_camera">）。
+# 电池包进入相机正下方的检测区并保持一段时间后，触发机械臂开始拆解。
+CAMERA_NAME = "station_camera"
+CAMERA_TRIGGER_RADIUS = 0.30   # 相机正下方的检测半径 (m)
+CAMERA_TRIGGER_HOLD = 0.5      # 连续处于检测区内多久才算确认 (s)
+
 # ============================================================
 # Sorting layout for two complete battery packs
 # ============================================================
@@ -1740,6 +1746,146 @@ def settle_pack2_at_station(
 
 
 # ============================================================
+# 相机触发：检测电池包是否到达工位
+# ============================================================
+
+def camera_trigger(
+    session,
+    controller,
+    pack_body,
+    camera=CAMERA_NAME,
+    radius=CAMERA_TRIGGER_RADIUS,
+    hold=CAMERA_TRIGGER_HOLD,
+    realtime=True,
+    timeout=60.0,
+):
+
+    print()
+    print(
+        "========================================"
+    )
+    print(
+        " CAMERA TRIGGER"
+    )
+    print(
+        "========================================"
+    )
+
+    cam_id = controller.optional_id(
+        "camera",
+        camera,
+    )
+
+    # OrcaStudio 不会把 <camera> 导出给 SDK，相机通常不在模型里。
+    # 此时退化为用相机安装座 body（<camera>_mount）的世界位置作为检测中心。
+    mount_id = (
+        -1
+        if cam_id >= 0
+        else controller.optional_id(
+            "body",
+            f"{camera}_mount",
+        )
+    )
+
+    if cam_id < 0 and mount_id < 0:
+
+        print(
+            f"[CAMERA] '{camera}' and body '{camera}_mount' not found in scene; "
+            "trigger skipped."
+        )
+
+        return
+
+    if cam_id < 0:
+
+        print(
+            f"[CAMERA] '{camera}' not exported by OrcaStudio; using body "
+            f"'{camera}_mount' position as the detection center."
+        )
+
+    body_id = controller.id(
+        "body",
+        pack_body,
+    )
+
+    frame_dt = 0.02
+
+    held = 0.0
+    elapsed = 0.0
+
+    print(
+        f"Waiting for '{pack_body}' under camera '{camera}' "
+        f"(radius={radius:.2f} m, hold={hold:.2f} s) ..."
+    )
+
+    while True:
+
+        # 保持工位上的物体固定（与其它动作阶段一致），避免等待期间漂移。
+        if controller.on_frame:
+            controller.on_frame(controller)
+
+        mujoco.mj_forward(
+            controller.m,
+            controller.d,
+        )
+
+        session.sync(
+            controller,
+            force=True,
+        )
+
+        cam_x = (
+            controller.d.cam_xpos[cam_id]
+            if cam_id >= 0
+            else controller.d.xpos[mount_id]
+        )
+
+        body_xyz = controller.d.xpos[body_id]
+
+        dist = float(
+            np.linalg.norm(
+                body_xyz[:2] - cam_x[:2]
+            )
+        )
+
+        # 电池包位于相机正下方的检测圆柱内。
+        visible = (
+            dist < radius
+            and 0.0 < body_xyz[2] < cam_x[2] - 0.1
+        )
+
+        if visible:
+
+            held += frame_dt
+
+            if held >= hold:
+
+                print(
+                    f"[CAMERA] {pack_body} detected under '{camera}' "
+                    f"(dist={dist:.3f} m); triggering disassembly."
+                )
+
+                return
+
+        else:
+
+            held = 0.0
+
+        elapsed += frame_dt
+
+        if elapsed > timeout:
+
+            raise MotionError(
+                f"Camera trigger timeout: '{pack_body}' not detected "
+                f"under '{camera}' within {timeout:.0f} s."
+            )
+
+        if realtime:
+
+            time.sleep(frame_dt)
+
+
+# ============================================================
 # MAIN
 # ============================================================
 
@@ -1763,6 +1909,29 @@ def main():
         help=(
             "机械臂独立资产的命名空间前缀，例如 ur5e_arm_usda_。"
             "默认沿用 --prefix。"
+        ),
+    )
+
+    parser.add_argument(
+        "--camera-view",
+        nargs="?",
+        const=CAMERA_NAME,
+        default=None,
+        metavar="NAME",
+        help=(
+            "打开一个实时弹窗显示 MuJoCo 相机画面，默认相机为 "
+            f"{CAMERA_NAME}。"
+        ),
+    )
+
+    parser.add_argument(
+        "--camera-source",
+        choices=("auto", "mirror", "studio"),
+        default="auto",
+        help=(
+            "--camera-view 的画面来源：studio 抓 OrcaStudio 视口真实画面"
+            "（GetCameraFramePNG，仅在线），mirror 用本地网格模型做镜像渲染，"
+            "auto 在线优先 studio、失败退回 mirror。"
         ),
     )
 
@@ -1818,6 +1987,13 @@ def main():
             initialize=True,
         )
 
+        if args.camera_view:
+            session.enable_camera_view(
+                c1,
+                args.camera_view,
+                args.camera_source,
+            )
+
         pack2_bodies = [
             TRAY2,
             PACK2_PREFIX + "battery_cover",
@@ -1842,6 +2018,14 @@ def main():
         )
 
         c1.on_frame = hold_batch1
+
+        # 第一包在场景启动时已在工位：相机确认到位后再开始拆解。
+        camera_trigger(
+            session,
+            c1,
+            TRAY1,
+            realtime=not args.fast,
+        )
 
         ready_above_cover(
             c1,
@@ -1979,6 +2163,15 @@ def main():
         )
 
         c2.on_frame = hold_batch2
+
+        # 第二包已由传送带送入工位（hold_batch2 固定的是移动后的位姿）：
+        # 相机确认到位后再开始第二包拆解。
+        camera_trigger(
+            session,
+            c2,
+            TRAY2,
+            realtime=not args.fast,
+        )
 
 
         ready_above_cover(

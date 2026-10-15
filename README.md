@@ -386,7 +386,7 @@ ev-battery-disassembly-demo/
 
 ### `scene_two_pack.xml`
 
-工作站场景（机械臂本体单独放在 `ur5e_arm.xml`），包含：
+工作站场景（机械臂与底座单独放在 `ur5e_arm.xml`），包含：
 
 - 双电池包
 - 输送带
@@ -398,10 +398,11 @@ ev-battery-disassembly-demo/
 
 ### `ur5e_arm.xml`
 
-UR5e 机械臂资产，在 OrcaStudio 中与场景分开导入，包含：
+UR5e 机械臂资产（机械臂 + 底座），在 OrcaStudio 中与场景分开导入，包含：
 
 - UR5e
 - 机器人基座
+- 机器人底座（`ur5e_pedestal`）
 - SMC 风格吸盘
 
 ### `disassembly.py`
@@ -528,12 +529,12 @@ conda activate orcalab
 在 OrcaStudio 中依次导入**两个** XML 文件：
 
 ```text
-scene_two_pack.xml    # 输送线、电池包、分类料箱、回收箱及外围设施
-ur5e_arm.xml          # UR5e 机械臂（独立导入的资产）
+scene_two_pack.xml    # 纯场景：输送线、电池包、分类料箱、回收箱及外围设施
+ur5e_arm.xml          # UR5e 机械臂 + 底座（独立导入的资产）
 ```
 
 机械臂与场景是两个独立资产，导入后 UR5e 的初始位置不一定是正确的，
-需要**手动拖动 UR5e** 到拆解工位：
+需要**手动拖动 UR5e 资产（含底座）** 到拆解工位：
 
 - 位于**输送带正前方**（正对传送带上的拆解工位）
 - 位于**三个分类料箱（上盖 / 汇流排 / 电芯）的中间**，使左右两侧料箱都落在机械臂工作空间内
@@ -563,6 +564,59 @@ python run_two_pack_orca.py \
 Cartesian speed : 0.360 m/s
 Joint speed     : 1.600 rad/s
 ```
+
+加 `--camera-view` 可额外弹出一个实时窗口，显示工位上方的
+`station_camera` 相机画面（俯视拆解工位）：
+
+```bash
+python run_two_pack_orca.py \
+  --addr localhost:50051 \
+  --prefix scene_two_pack_usda_ \
+  --arm-prefix ur5e_arm_usda_ \
+  --camera-view
+```
+
+`--camera-view` 可省略值（默认 `station_camera`），也可指定其他相机名，例如
+`--camera-view station_camera`。该窗口只是把相机渲染出来用于观察，拆解触发
+逻辑仍使用相机位置（`<camera>` 不存在时退化为 `station_camera_mount` 的位置）
+做几何判定。
+
+关于在线模式下的画面：OrcaStudio 只把**碰撞代理体**导出给 SDK（导出模型里
+`nmesh=0`、`ncam=0`，既没有网格也没有 `<camera>`），所以 **SDK 的物理模型**
+里渲染不出真实场景。但引擎侧另外提供了抓帧接口，可以用 `--camera-source`
+选择画面来源：
+
+- `--camera-source auto`（默认）：在线时先试 `studio`，抓帧不可用则自动退回
+  `mirror`。
+- `--camera-source studio`：调用 OrcaStudio 的 gRPC `GetCameraFramePNG`，把
+  **当前 Studio 视口**渲染出的画面写成 PNG 再显示，因此看到的就是 OrcaStudio
+  里的真实画面（含网格、材质、光照）。注意该接口没有相机名参数，抓到的是
+  Studio 当前激活的视口，而不是指定的 `station_camera`。它涉及 GPU 回读，
+  OrcaGym 自身记录「与渲染流并发可能触发 `AttachmentReadback::CopyExecute`
+  崩溃」，因此这里把抓帧节流到约 4 Hz，并且与 `gym.render()` 在同一事件循环里
+  顺序调用（不会两个 RPC 同时在飞）。
+- `--camera-source mirror`：改用**本地网格模型的镜像视图**：额外加载本地带网格的
+  `scene_two_pack.xml` + `ur5e_arm.xml`，每帧把在线模型的关节/自由体状态按名字
+  同步进来（两个世界只差一个固定平移，偏移量从 `station_camera_mount` 的实时
+  位置自动求得），再用本地的 `station_camera` 渲染。这样在线也能看到真实的
+  UR5e 机械臂跟随运动，且完全不碰引擎的渲染管线。
+
+启动时会打印一行确认信息（`mirror` 模式）：
+
+```text
+[CAMERA VIEW] mesh mirror: nmesh=20, joints=22/22, camera=model:'station_camera', offset=[...]
+```
+
+或（`studio` 模式）：
+
+```text
+[CAMERA VIEW] studio viewport capture enabled; PNG at /tmp/orca_viewport_<pid>.png
+```
+
+之后会周期性打印 `[CAMERA VIEW] frame N, ...` / `[CAMERA VIEW] studio frame N, ...`，
+用来确认窗口确实在刷新。`studio` 抓帧失败会自动停用弹窗并提示改用
+`--camera-source mirror`；`mirror` 在本 XML 缺失或加载失败时会退回显示碰撞
+代理体的俯视视角。
 
 ---
 

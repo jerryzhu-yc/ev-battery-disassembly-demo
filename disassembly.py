@@ -237,7 +237,8 @@ class Controller:
         if exact >= 0:
             return exact
         count = getattr(self.m, {"body":"nbody","joint":"njnt","site":"nsite",
-                                "geom":"ngeom","actuator":"nu","key":"nkey","equality":"neq"}[kind])
+                                "geom":"ngeom","actuator":"nu","key":"nkey",
+                                "equality":"neq","camera":"ncam"}[kind])
         # OrcaStudio adds a scene namespace and appends a UUID to geom names.
         # Match complete components so cell_1 cannot resolve to cell_10.
         uuid_tail = r"(?:_[0-9A-F]{8}(?:_[0-9A-F]{4}){3}_[0-9A-F]{12})?"
